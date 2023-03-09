@@ -1,2 +1,2 @@
 #!/bin/bash
-chmod -R 755 $(find /11-directories_permissions/ -type d)  
+chmod -R ugo+x $(find /11-directories_permissions/ -type d)  
