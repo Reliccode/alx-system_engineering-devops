@@ -24,3 +24,4 @@ The file _hello is in the working directory
 The file _hello is a symbolic link
 
 chown --from=guillaume betty hello - script that changes the owner of the file hello to betty only if it is owned by the user guillaume.
+telnet towel.blinkenlights.nl - script that plays Star Wars IV episode in terminal
