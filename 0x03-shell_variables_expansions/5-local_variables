@@ -1,2 +1,2 @@
 #!/bin/bash
-declare -p | grep -Er '^declare (local )?(-[aAfnx]+|[[:alpha:]_][[:alnum:]_]*\(\))' | cut -d' ' -f3-
+declare -p
