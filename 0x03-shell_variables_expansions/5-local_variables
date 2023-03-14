@@ -1,2 +1,3 @@
 #!/bin/bash
-declare -p
+compgen -A variable -A function | grep -v '^declare'
+
