@@ -1,14 +1,45 @@
+#!/bin/bash
+
+# Step 1: Access the Docker container shell
 sudo docker exec -it b2ee240c7d6c /bin/bash
+
+# Step 2: Navigate to the Apache configuration directory
 cd /etc/apache2/sites-available
-/etc/apache2/sites-available# ls
-/etc/apache2/sites-available# nano 000-default.conf
-/etc/apache2/sites-available# cd /var/www/html
-/var/www/html# ls
-service apache2 restart
-nano /etc/apache2/apache2.conf #Added ServerName -myserverip
-apache2ctl configtest
-service apache2 restart
+
+# Step 3: List the available Apache configuration files
+ls
+
+# Step 4: Edit the 000-default.conf file
+nano 000-default.conf
+
+# Step 5: Navigate to the Apache document root directory
 cd /var/www/html
-/var/www/html# ls
+
+# Step 6: List the contents of the document root
+ls
+
+# Step 7: Restart Apache service
 service apache2 restart
+
+# Step 8: Edit the Apache main configuration file and add ServerName
+nano /etc/apache2/apache2.conf
+# Add the line: ServerName your-server-name-or-ip
+# Replace "your-server-name-or-ip" with your actual server name or IP address
+
+# Step 9: Perform Apache configuration syntax check
+apache2ctl configtest
+
+# Step 10: Restart Apache to apply changes
+service apache2 restart
+
+# Step 11: Navigate to the Apache document root directory again
+cd /var/www/html
+
+# Step 12: List the contents of the document root
+ls
+
+# Step 13: Restart Apache service one more time
+service apache2 restart
+
+# Step 14: Exit the Docker container shell
 exit
