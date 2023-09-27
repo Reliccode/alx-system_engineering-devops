@@ -1,11 +1,35 @@
 #!/usr/bin/env bash
-# Script that installs Nginx server and redirects /redirect_me
-sudo apt-get update -y
-sudo apt-get install -y nginx
-echo "Hello World!" | sudo tee /var/www/html/index.html
-sed -i "s/server_name _;/server_name _;\n\trewrite ^\/redirect_me https:\/\/github.com\/Reliccode permanent;/" /etc/nginx/sites-available/default
-if ps aux | grep -q '[n]ginx'; then
-	sudo service nginx restart
-else
-	sudo service nginx start
+# Script that installs Nginx service and configures redirection
+
+# Install Nginx if it's not already installed
+if ! command -v nginx &>/dev/null; then
+    sudo apt-get update -y
+    sudo apt-get install -y nginx
 fi
+
+# Create a custom Nginx configuration file for the redirection
+sudo sh -c 'cat > /etc/nginx/sites-available/redirect_me' <<EOF
+server {
+    listen 80;
+    server_name _;
+
+    location /redirect_me {
+        return 301 https://www.github.com/Reliccode/; # Replace with the desired destination URL
+    }
+
+    # Additional server configuration goes here if needed
+}
+EOF
+
+# Create a symbolic link to enable the configuration
+sudo ln -s /etc/nginx/sites-available/redirect_me /etc/nginx/sites-enabled/
+
+# Test Nginx configuration and reload Nginx
+sudo nginx -t
+sudo systemctl reload nginx
+
+# Create the "Hello World!" index.html file
+echo "Hello World!" | sudo tee /var/www/html/index.html
+
+# Restart Nginx to apply both the redirection and index.html changes
+sudo systemctl restart nginx
