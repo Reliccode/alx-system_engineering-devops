@@ -33,7 +33,7 @@ apache2ctl configtest
 service apache2 restart
 
 # Step 11: Navigate to the Apache document root directory again
-cd /var/www/html || exit
+cd /var/www/html
 
 # Step 12: List the contents of the document root
 ls
