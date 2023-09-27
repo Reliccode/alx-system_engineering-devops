@@ -11,7 +11,7 @@ fi
 sudo sh -c 'cat > /etc/nginx/sites-available/redirect_me' <<EOF
 server {
     listen 80;
-    server_name 54.237.53.109;
+    server_name _;
 
     location /redirect_me {
         return 301 https://www.github.com/Reliccode/;
