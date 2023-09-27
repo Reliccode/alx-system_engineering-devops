@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Step 1: Access the Docker container shell
 sudo docker exec -it b2ee240c7d6c /bin/bash
