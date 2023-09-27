@@ -14,10 +14,10 @@ server {
     server_name _;
 
     location /redirect_me {
-        return 301 https://www.github.com/Reliccode/; # Replace with the desired destination URL
+        return 301 https://www.github.com/Reliccode/;
     }
 
-    # Additional server configuration goes here if needed
+
 }
 EOF
 
