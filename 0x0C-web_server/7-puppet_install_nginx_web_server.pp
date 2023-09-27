@@ -1,35 +1,6 @@
-# Class to install and configure Nginx
-class nginx_web_server {
-  package { 'nginx':
-    ensure => 'installed',
-  }
+# Installs a Nginx server
 
-  service { 'nginx':
-    ensure  => 'running',
-    enable  => true,
-    require => Package['nginx'],
-  }
-
-  file { '/var/www/html/index.html':
-    ensure  => 'file',
-    content => 'Hello World!',
-  }
-
-  file { '/etc/nginx/sites-available/default':
-    ensure  => 'file',
-    source  => 'puppet:///modules/nginx_web_server/default',
-    notify  => Service['nginx'],
-  }
-
-  file { '/etc/nginx/sites-enabled/redirect':
-    ensure  => 'link',
-    target  => '/etc/nginx/sites-available/default',
-    require => File['/etc/nginx/sites-available/default'],
-    notify  => Service['nginx'],
-  }
-}
-
-# Apply the class to node
-node 'default' {
-  include nginx_web_server
+exec {'install':
+  provider => shell,
+  command  => 'sudo apt-get -y update ; sudo apt-get -y install nginx ; echo "Hello World" | sudo tee /var/www/html/index.nginx-debian.html ; sudo sed -i "s/server_name _;/server_name _;\n\trewrite ^\/redirect_me https:\/\/github.com\/Reliccode permanent;/" /etc/nginx/sites-available/default ; sudo service nginx start',
 }
