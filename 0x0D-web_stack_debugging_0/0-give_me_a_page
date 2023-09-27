@@ -1,3 +1,14 @@
-#!/usr/bin/env bash
-# Script that turns on an Apache Server
-service apache2 start
+sudo docker exec -it b2ee240c7d6c /bin/bash
+cd /etc/apache2/sites-available
+/etc/apache2/sites-available# ls
+/etc/apache2/sites-available# nano 000-default.conf
+/etc/apache2/sites-available# cd /var/www/html
+/var/www/html# ls
+service apache2 restart
+nano /etc/apache2/apache2.conf #Added ServerName -myserverip
+apache2ctl configtest
+service apache2 restart
+cd /var/www/html
+/var/www/html# ls
+service apache2 restart
+exit
