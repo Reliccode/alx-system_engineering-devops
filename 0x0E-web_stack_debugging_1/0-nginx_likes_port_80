@@ -1,7 +1,35 @@
 #!/usr/bin/env bash
-# Script that sets the port 80
+# This script configures Nginx to listen on port 80 of all active IPv4 IPs
 
-sed -i "s/listen 8080 default_server;/listen 80 default_server;/" /etc/nginx/sites-enabled/default
-sed -i "s/listen \[::\]:8080 default_server ipv6only=on;/listen \[::\]:80 default_server;/" /etc/nginx/sites-enabled/default
-sed -i "s/ ipv6only=on//" /etc/nginx/sites-available/default
-service nginx restart
+# Check if Nginx is installed
+if ! dpkg -l | grep -q nginx; then
+    apt-get update
+    apt-get install -y nginx
+fi
+
+# Check if Nginx is running
+if ! systemctl is-active --quiet nginx; then
+    systemctl start nginx
+fi
+
+# Check Nginx configuration to make sure it listens on port 80 for all active IPv4 IPs
+if ! grep -q "listen 80" /etc/nginx/sites-available/default; then
+    # Modify the Nginx default site configuration to listen on port 80
+    sed -i 's/listen 8080 default_server;/listen 80 default_server;/' /etc/nginx/sites-available/default
+    sed -i 's/listen \[::\]:8080 default_server ipv6only=on;/listen \[::\]:80 default_server;/' /etc/nginx/sites-available/default
+    sed -i 's/ ipv6only=on//' /etc/nginx/sites-available/default
+fi
+
+# Reload Nginx configuration
+systemctl reload nginx
+
+# Verify that Nginx is listening on port 80 for all active IPv4 IPs
+ips=$(hostname -I)
+for ip in $ips; do
+    if ! curl -s -I "$ip:80" | grep "HTTP/1.1 200 OK" > /dev/null; then
+        echo "Failed to configure Nginx to listen on port 80 for $ip."
+        exit 1
+    fi
+done
+
+echo "Nginx is now listening on port 80 for all active IPv4 IPs."
