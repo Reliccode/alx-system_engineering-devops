@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# Script that sets the port 80 in 7 lines or less
 sed -i "s/8080/80/g" /etc/nginx/sites-enabled/default
 sed -i '/ipv6only=on/d' /etc/nginx/sites-available/default
 service nginx stop
