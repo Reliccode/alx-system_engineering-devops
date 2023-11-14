@@ -34,11 +34,12 @@ def recurse(subreddit, hot_list=[], after=None):
                        allow_redirects=False)
 
     if res.status_code != 200:
+        print(f"Error: Unable to fetch data from Reddit API. Status Code: {res.status_code}")
         return None
 
     dic = res.json()
     hot_posts = dic['data']['children']
-    add_title(hot_list, hot_posts)
+    hot_list.extend([post['data']['title'] for post in hot_posts])
     after = dic['data']['after']
     if not after:
         return hot_list
