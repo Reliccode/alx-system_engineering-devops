@@ -14,7 +14,6 @@ def recurse(subreddit, hot_list=[]):
     Args:
         subreddit (str): The subreddit to search.
         hot_list (list): List to store titles of hot articles.
-        after (str): Identifier for the starting point of the search.
 
     Returns:
         list: List containing the titles of hot articles.
@@ -23,13 +22,9 @@ def recurse(subreddit, hot_list=[]):
     base_url = 'https://www.reddit.com/r/{}/hot.json'.format(subreddit)
     headers = {'User-Agent': 'Mozilla/5.0'}
 
-    params = {'limit': 100, 'after': after}
-    response = requests.get(
-        base_url,
-        headers=headers,
-        params=params,
-        allow_redirects=False
-    )
+    params = {'limit': 100}
+    response = requests.get(base_url, headers=headers,
+                            params=params, allow_redirects=False)
 
     if response.status_code == 200:
         data = response.json().get('data', {})
@@ -42,7 +37,7 @@ def recurse(subreddit, hot_list=[]):
         after = data.get('after', None)
 
         if after:
-            return recurse(subreddit, hot_list, after)
+            return recurse(subreddit, hot_list)
         else:
             return hot_list
 
