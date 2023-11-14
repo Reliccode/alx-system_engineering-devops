@@ -24,8 +24,12 @@ def recurse(subreddit, hot_list=[], after=None):
     headers = {'User-Agent': 'Mozilla/5.0'}
 
     params = {'limit': 100, 'after': after}
-    response = requests.get(base_url, headers=headers,
-                            params=params, allow_redirects=False)
+    response = requests.get(
+        base_url,
+        headers=headers,
+        params=params,
+        allow_redirects=False
+    )
 
     if response.status_code == 200:
         data = response.json().get('data', {})
@@ -49,7 +53,7 @@ def recurse(subreddit, hot_list=[], after=None):
         print("Error:", response.status_code)
         return None
 
-# I will test later if need be
+# For later testing
 # if __name__ == "__main__":
 #     result = recurse(sys.argv[1])
 #     if result is not None:
