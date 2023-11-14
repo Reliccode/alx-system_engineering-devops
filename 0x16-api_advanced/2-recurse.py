@@ -1,57 +1,47 @@
 #!/usr/bin/python3
+
 """
-2-recurse
+Function that queries the Reddit API and prints
+the top ten hot posts of a subreddit
 """
 
 import requests
+import sys
 
 
-def recurse(subreddit, hot_list=[]):
-    """
-    Recursive function that queries the Reddit API and returns a list
-    containing the titles of all hot articles for a given subreddit.
+def add_title(hot_list, hot_posts):
+    """ Adds item into a list """
+    if len(hot_posts) == 0:
+        return
+    hot_list.append(hot_posts[0]['data']['title'])
+    hot_posts.pop(0)
+    add_title(hot_list, hot_posts)
 
-    Args:
-        subreddit (str): The subreddit to search.
-        hot_list (list): List to store titles of hot articles.
 
-    Returns:
-        list: List containing the titles of hot articles.
-               If no results are found, returns None.
-    """
-    base_url = 'https://www.reddit.com/r/{}/hot.json'.format(subreddit)
-    headers = {'User-Agent': 'Mozilla/5.0'}
+def recurse(subreddit, hot_list=[], after=None):
+    """ Queries to Reddit API """
+    u_agent = 'Mozilla/5.0'
+    headers = {
+        'User-Agent': u_agent
+    }
 
-    params = {'limit': 100}
-    response = requests.get(base_url, headers=headers,
-                            params=params, allow_redirects=False)
+    params = {
+        'after': after
+    }
 
-    if response.status_code == 200:
-        data = response.json().get('data', {})
-        children = data.get('children', [])
+    url = "https://www.reddit.com/r/{}/hot.json".format(subreddit)
+    res = requests.get(url,
+                       headers=headers,
+                       params=params,
+                       allow_redirects=False)
 
-        for child in children:
-            title = child.get('data', {}).get('title', '')
-            hot_list.append(title)
-
-        after = data.get('after', None)
-
-        if after:
-            return recurse(subreddit, hot_list)
-        else:
-            return hot_list
-
-    elif response.status_code == 404:
-        print("Subreddit not found.")
-        return None
-    else:
-        print("Error:", response.status_code)
+    if res.status_code != 200:
         return None
 
-# For later testing
-# if __name__ == "__main__":
-#     result = recurse(sys.argv[1])
-#     if result is not None:
-#         print(len(result))
-#     else:
-#         print("None")
+    dic = res.json()
+    hot_posts = dic['data']['children']
+    add_title(hot_list, hot_posts)
+    after = dic['data']['after']
+    if not after:
+        return hot_list
+    return recurse(subreddit, hot_list=hot_list, after=after)
