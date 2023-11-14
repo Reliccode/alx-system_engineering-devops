@@ -1,47 +1,35 @@
 #!/usr/bin/python3
-
 """
-Function that queries the Reddit API and prints
-the top ten hot posts of a subreddit
+Module Docs
 """
-
 import requests
-import sys
 
 
-def add_title(hot_list, hot_posts):
-    """ Adds item into a list """
-    if len(hot_posts) == 0:
-        return
-    hot_list.append(hot_posts[0]['data']['title'])
-    hot_posts.pop(0)
-    add_title(hot_list, hot_posts)
-
-
-def recurse(subreddit, hot_list=[], after=None):
-    """ Queries to Reddit API """
-    u_agent = 'Mozilla/5.0'
-    headers = {
-        'User-Agent': u_agent
+def recurse(subreddit, hot_list=[], count=0, after=None):
+    """
+    Function Docs
+    """
+    url = 'https://www.reddit.com'
+    header = {
+        'Accept': 'application/json',
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'
     }
-
-    params = {
-        'after': after
-    }
-
-    url = "https://www.reddit.com/r/{}/hot.json".format(subreddit)
-    res = requests.get(url,
-                       headers=headers,
-                       params=params,
-                       allow_redirects=False)
-
-    if res.status_code != 200:
-        return None
-
-    dic = res.json()
-    hot_posts = dic['data']['children']
-    add_title(hot_list, hot_posts)
-    after = dic['data']['after']
-    if not after:
-        return hot_list
-    return recurse(subreddit, hot_list=hot_list, after=after)
+    if after is None:
+        after = ''
+    response = requests.get(
+            '{}/r/{}/.json?sort={}&limit={}&count={}&after={}'.format(
+                url, subreddit, 'hot', 30, count, after),
+            headers=header,
+            allow_redirects=False)
+    if response.status_code == 200:
+        posts = response.json()['data']['children']
+        hot_list.extend(list(map(lambda x: x['data']['title'], posts)))
+        if len(posts) >= 30 and response.json()['data']['after']:
+            return recurse(subreddit, hot_list,
+                           count + len(posts),
+                           response.json()['data']['after']
+                           )
+        else:
+            return hot_list if hot_list else None
+    else:
+        return hot_list if hot_list else None
