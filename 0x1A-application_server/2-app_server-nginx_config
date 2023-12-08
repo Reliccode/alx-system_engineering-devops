@@ -1,7 +1,12 @@
+# Nginx configuration for serving Flask application
+
+# Listen on port 80
 server {
     listen 80;
+    # Replace with your actual server IP or domain name
     server_name 54.237.53.109;
 
+    # Proxy requests to Gunicorn running on localhost:5000
     location /airbnb-onepage/ {
         proxy_pass http://127.0.0.1:5000;
         proxy_set_header Host $host;
@@ -13,6 +18,7 @@ server {
         proxy_cache_bypass $http_upgrade;
     }
 
+    # Return a 404 error for other paths
     location / {
         return 404;
     }
